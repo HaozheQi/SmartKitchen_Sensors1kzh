@@ -42,7 +42,7 @@ void sensor_init(uint8_t i, Adafruit_BNO055 bno){
 
 
 void printIMU(imu::Vector<3> acc) {
-  /* Display the floating point data */
+  /* Display the floating point data   */
   Serial.print(acc.x());
   Serial.print(",");
   Serial.print(acc.y());
@@ -63,10 +63,12 @@ void tcaselect(uint8_t i) {
 void setup(void)
 {
   Serial.begin(2000000);
+  
   Wire.begin();
   //Serial.println("Orientation Sensor Test"); Serial.println("");
   delay(1000);
   pinMode(pin_kinect, INPUT_PULLUP);
+  
   attachInterrupt(digitalPinToInterrupt(pin_kinect), readAudio, RISING);
   pinMode(pin_LEDs, OUTPUT);
   
@@ -118,9 +120,9 @@ void setup(void)
  
 void loop(void)
 {
-  /* Get a new sensor event */
+  /* Get a new sensor event   */
   sensors_event_t event; 
-  
+
   tcaselect(0);   // select port 1
   imu::Vector<3> acc0 = bno0.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
   
@@ -145,20 +147,24 @@ void loop(void)
   tcaselect(7);   // select port 1
   imu::Vector<3> acc7 = bno7.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
 
-  // Print sensor values if there is a clock tick
+  // Print sensor values
+  printIMU(acc0);
+  printIMU(acc1);
+  printIMU(acc2);
+  printIMU(acc3);
+  printIMU(acc4);
+  printIMU(acc5);
+  printIMU(acc6);
+  printIMU(acc7);
+ 
+  
+  Serial.print(state);
+  Serial.println("");
   if(state){
-    printIMU(acc0);
-    printIMU(acc1);
-    printIMU(acc2);
-    printIMU(acc3);
-    printIMU(acc4);
-    printIMU(acc5);
-    printIMU(acc6);
-    printIMU(acc7);
-    Serial.println("");
     state = 0;
   }
 
+  
   // LED blinking
   if(LEDcounter == 1000){
     digitalWrite(pin_LEDs, HIGH);
@@ -169,7 +175,6 @@ void loop(void)
   }
 
   LEDcounter++;
-
 }
 
 void readAudio(){
