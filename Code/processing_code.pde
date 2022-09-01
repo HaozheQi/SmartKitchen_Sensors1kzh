@@ -15,7 +15,7 @@ String fileName;
 void setup()
 {
   table = new Table();
-  String portName = "COM11"; 
+  String portName = "COM3"; 
   //CAUTION: your Arduino port number is probably different! Mine happened to be 1. Use a "handshake" sketch to figure out and test which port number your Arduino is talking on. A "handshake" establishes that Arduino and Processing are listening/talking on the same port.
   //Here's a link to a basic handshake tutorial: https://processing.org/tutorials/overview/
   
@@ -51,68 +51,76 @@ void setup()
   table.addColumn("sensor7X");
   table.addColumn("sensor7Y");
   table.addColumn("sensor7Z");
+  table.addColumn("ClockTick");
  
 }
  
 void serialEvent(Serial myPort){
-  val = myPort.readStringUntil('\n'); //The newline separator separates each Arduino loop. We will parse the data by each newline separator. 
-  if (val!= null) { //We have a reading! Record it.
-    if (count>7){
-      time1 = second();
-      if(time0!=time1){
-        ground = millis();
-      }
-      time0 = time1;
-      val = trim(val); //gets rid of any whitespace or Unicode nonbreakable space
-      println(val); //Optional, useful for debugging. If you see this, you know data is being sent. Delete if  you like. 
-      float sensorVals[] = float(split(val, ',')); //parses the packet from Arduino and places the valeus into the sensorVals array. I am assuming floats. Change the data type to match the datatype coming from Arduino. 
-      
-      TableRow newRow = table.addRow(); //add a row for this new reading
-      //newRow.setInt("id", table.lastRowIndex());//record a unique identifier (the row's index)
-      
-      //record time stamp
-      ms = str(millis()-ground);
-      
-      if(ms.length() == 1){
-        pad = "00";
-      }
-      else if(ms.length() == 2){
-        pad="0";
-      }
-      else{pad="";}
+  try {
+    
+    val = myPort.readStringUntil('\n'); //The newline separator separates each Arduino loop. We will parse the data by each newline separator. 
+    if (val!= null) { //We have a reading! Record it.
+      if (count>7){
+        time1 = second();
+        if(time0!=time1){
+          ground = millis();
+        }
+        time0 = time1;
+        val = trim(val); //gets rid of any whitespace or Unicode nonbreakable space
+        println(val); //Optional, useful for debugging. If you see this, you know data is being sent. Delete if  you like. 
+        float sensorVals[] = float(split(val, ',')); //parses the packet from Arduino and places the valeus into the sensorVals array. I am assuming floats. Change the data type to match the datatype coming from Arduino. 
         
-      String date = str(year()) + "-" + str(month()) + "-" + str(day())+" "+ str(hour())+ ":"+ str(minute())+ ":"+ str(second())+"."+pad+ms;
-      newRow.setString("Date", date);
-      
-      //record sensor information. Customize the names so they match your sensor column names. 
-      newRow.setFloat("sensor0X", sensorVals[0]);
-      newRow.setFloat("sensor0Y", sensorVals[1]);
-      newRow.setFloat("sensor0Z", sensorVals[2]);
-      newRow.setFloat("sensor1X", sensorVals[3]);
-      newRow.setFloat("sensor1Y", sensorVals[4]);
-      newRow.setFloat("sensor1Z", sensorVals[5]);
-      newRow.setFloat("sensor2X", sensorVals[6]);
-      newRow.setFloat("sensor2Y", sensorVals[7]);
-      newRow.setFloat("sensor2Z", sensorVals[8]);
-      newRow.setFloat("sensor3X", sensorVals[9]);
-      newRow.setFloat("sensor3Y", sensorVals[10]);
-      newRow.setFloat("sensor3Z", sensorVals[11]);
-      newRow.setFloat("sensor4X", sensorVals[12]);
-      newRow.setFloat("sensor4Y", sensorVals[13]);
-      newRow.setFloat("sensor4Z", sensorVals[14]);
-      newRow.setFloat("sensor5X", sensorVals[15]);
-      newRow.setFloat("sensor5Y", sensorVals[16]);
-      newRow.setFloat("sensor5Z", sensorVals[17]);
-      newRow.setFloat("sensor6X", sensorVals[18]);
-      newRow.setFloat("sensor6Y", sensorVals[19]);
-      newRow.setFloat("sensor6Z", sensorVals[20]);
-      newRow.setFloat("sensor7X", sensorVals[21]);
-      newRow.setFloat("sensor7Y", sensorVals[22]);
-      newRow.setFloat("sensor7Z", sensorVals[23]);
-      
-    }    
-    count++; 
-   }
+        TableRow newRow = table.addRow(); //add a row for this new reading
+        //newRow.setInt("id", table.lastRowIndex());//record a unique identifier (the row's index)
+        
+        //record time stamp
+        ms = str(millis()-ground);
+        
+        if(ms.length() == 1){
+          pad = "00";
+        }
+        else if(ms.length() == 2){
+          pad="0";
+        }
+        else{pad="";}
+          
+        String date = str(year()) + "-" + str(month()) + "-" + str(day())+" "+ str(hour())+ ":"+ str(minute())+ ":"+ str(second())+"."+pad+ms;
+        newRow.setString("Date", date);
+        
+        //record sensor information. Customize the names so they match your sensor column names. 
+        newRow.setFloat("sensor0X", sensorVals[0]);
+        newRow.setFloat("sensor0Y", sensorVals[1]);
+        newRow.setFloat("sensor0Z", sensorVals[2]);
+        newRow.setFloat("sensor1X", sensorVals[3]);
+        newRow.setFloat("sensor1Y", sensorVals[4]);
+        newRow.setFloat("sensor1Z", sensorVals[5]);
+        newRow.setFloat("sensor2X", sensorVals[6]);
+        newRow.setFloat("sensor2Y", sensorVals[7]);
+        newRow.setFloat("sensor2Z", sensorVals[8]);
+        newRow.setFloat("sensor3X", sensorVals[9]);
+        newRow.setFloat("sensor3Y", sensorVals[10]);
+        newRow.setFloat("sensor3Z", sensorVals[11]);
+        newRow.setFloat("sensor4X", sensorVals[12]);
+        newRow.setFloat("sensor4Y", sensorVals[13]);
+        newRow.setFloat("sensor4Z", sensorVals[14]);
+        newRow.setFloat("sensor5X", sensorVals[15]);
+        newRow.setFloat("sensor5Y", sensorVals[16]);
+        newRow.setFloat("sensor5Z", sensorVals[17]);
+        newRow.setFloat("sensor6X", sensorVals[18]);
+        newRow.setFloat("sensor6Y", sensorVals[19]);
+        newRow.setFloat("sensor6Z", sensorVals[20]);
+        newRow.setFloat("sensor7X", sensorVals[21]);
+        newRow.setFloat("sensor7Y", sensorVals[22]);
+        newRow.setFloat("sensor7Z", sensorVals[23]);
+        newRow.setFloat("ClockTick", sensorVals[24]);
+        
+      }    
+      count++; 
+     }
+  }
+  catch(RuntimeException e) { 
+    e.printStackTrace(); 
+  } 
 }
  
 void draw()
@@ -121,6 +129,6 @@ void draw()
 }
 
 void keyPressed() {
-  fileName = str(year()) + "-" + str(month()) + "-" + str(day())+ ".csv"; //this filename is of the form year+month+day+readingCounter
+  fileName = str(year()) + "-" + str(month()) + "-" + str(day())+ " " + str(hour()) + "h" + str(minute()) + ".csv"; //this filename is of the form year+month+day+readingCounter
   saveTable(table, fileName); //Woo! save it to your computer. It is ready for all your spreadsheet dreams. 
 }
